@@ -40,7 +40,7 @@ namespace App.Controllers
             return View((object)name);
         }
 
-        public IActionResult Product(int? id)
+        public IActionResult ViewProduct(int? id)
         {
             var product = _productService.Where(x => x.Id == id).FirstOrDefault();
             if (product == null)
@@ -55,6 +55,8 @@ namespace App.Controllers
             return View(product);
         }
     }
+    
+    
 }
 
 /**
@@ -68,5 +70,16 @@ namespace App.Controllers
     3. TempData => đọc 1 lần sẽ bị xóa
             - TempData["StatusMessage"] = "Success";
             - var thongbao = TempData["StatusMessage"];
+
+    Các Attribute đặt trước Action của Controller: (Ví dụ Planet Page)
+    [Route]                 : 
+    [AcceptVerbs("GET")]    : Chỉ được truy cập bằng GET
+    [HttpPost]              :
+    [HttpGet]               :
+    [HttpPut]               :
+    [HttpDelete]            :
+    [HttpHead]              :
+    [HttpPatch]             :
+    => còn lại tương tự [Route], chỉ khác là áp dụng vs đúng phương thức GET, POST, PUT,...
 
 */

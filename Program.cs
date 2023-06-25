@@ -1,5 +1,7 @@
+using System.Net;
 using App.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
+using App.ExtendMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<ProductService, ProductService>();
+builder.Services.AddSingleton<PlanetService, PlanetService>();
 
 /* ================ Cấu hình thư mục tìm kiếm các view  ================ */
 builder.Services.Configure<RazorViewEngineOptions>(option =>
@@ -45,10 +48,32 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+
+// custom response page from error 404 -> 599
+app.AddStatusCodePage(); // phương thức tự Extend 
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+
+// url: /xemsanpham/id(1,4) hoặc /viewproduct/id(1,4)
+app.MapControllerRoute(
+    name: "first",
+    pattern: "{url:regex(^((viewproduct)|(xemsanpham))$)}/{id:range(1, 4)}",
+    defaults: new
+    {
+        controller = "First",
+        action = "ViewProduct"
+    }
+);
+
+app.MapAreaControllerRoute(
+    name: "defaultArea",
+    pattern: "{controller=Home}/{action=Index}/{id?}",
+    areaName: "ProductManage"
+);
 
 app.MapControllerRoute(
     name: "default",
@@ -57,3 +82,11 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+/**
+    Tạo controller
+    dotnet aspnet-codegenerator controller -name ControllerName -namespace ControllerNameSpace -outDir ControllersDir
+
+    Tạo Area
+    dotnet aspnet-codegenerator area ProductManage
+*/

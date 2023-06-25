@@ -1,0 +1,15 @@
+@using App.Services
+
+<h4>Các hành tinh trong hệ Mặt trời</h4>
+
+<div class="list-group">
+    @foreach (PlanetModel planet in Model)
+    {
+        <a class="list-group-item list-group-item-action" asp-action="Details" asp-route-id="@planet.Id">
+            @planet.VnName (@planet.Name)
+        </a>
+    }
+    <a class="list-group-item list-group-item-action" asp-action="Earth" asp-route-id="3">
+        Trái Đất
+    </a>
+</div>

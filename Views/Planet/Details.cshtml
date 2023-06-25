@@ -1,0 +1,17 @@
+@model PlanetModel
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <img src="~/planet/@{@Model.Name}.jpg" class="card-img-top" alt="@Model.Name">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Name (@Model.VnName)</h5>
+                <p class="card-text">@Model.Content</p>
+                <a asp-action="Index" class="btn btn-primary">Danh sách hành tinh</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Url.RouteUrl("PlanetDetail")
