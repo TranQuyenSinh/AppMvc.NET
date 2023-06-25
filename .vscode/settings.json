@@ -1,0 +1,10 @@
+{
+  "files.exclude": {
+    "obj": true,
+    "bin": true,
+    "Properties": true,
+    "AppMvc.csproj": true,
+    "appsettings.Development.json": true,
+    ".vscode": true
+  }
+}

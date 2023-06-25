@@ -1,0 +1,15 @@
+@using App.Models
+@model ProductModel
+@{
+    var totalProduct = ViewData["TotalProduct"];
+    ViewData["Title"] = Model.Name;
+}
+
+<p>Tổng số sản phẩm: @totalProduct</p>
+<div class="card text-start bg-dark text-light">
+  <div class="card-header bg-primary">@Model.Id</div>
+  <div class="card-body">
+    <h4 class="card-title">@Model.Name</h4>
+    <p class="card-text">Giá: @Model.Price</p>
+  </div>
+</div>
