@@ -9,7 +9,8 @@
     "AppMvc.csproj": true,
     "AppMvc.sln": true,
     "appsettings.Development.json": true,
-    ".gitignore": true
+    ".gitignore": true,
+    "ExtendMethods": true
   },
   "dotnet.defaultSolution": "AppMvc.sln"
 }

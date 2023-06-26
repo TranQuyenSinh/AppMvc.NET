@@ -2,6 +2,8 @@ using System.Net;
 using App.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
 using App.ExtendMethods;
+using App.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,11 @@ builder.Services.Configure<RazorViewEngineOptions>(option =>
     option.ViewLocationFormats.Add("/MyView/{1}/{0}" + RazorViewEngine.ViewExtension);
 });
 
+/* ================ Đăng ký DbContext ================ */
+builder.Services.AddDbContext<AppDbContext>(option => {
+    var connStr = builder.Configuration.GetConnectionString("AppMvcConnectionString");
+    option.UseSqlServer(connStr);
+});
 
 
 
