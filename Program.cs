@@ -96,4 +96,18 @@ app.Run();
 
     Tạo Area
     dotnet aspnet-codegenerator area ProductManage
+
+    Sử dụng Gulp
+    - Cài: 
+    npm init
+    npm install --global gulp-cli
+    npm install gulp
+    npm install node-sass postcss sass
+    npm install gulp-sass gulp-less gulp-concat gulp-cssmin gulp-uglify rimraf gulp-postcss gulp-rename 
+
+    Tạo folder lưu SCSS assets/scss/site.scss
+    Thêm vào thư mục gốc dự án file gulpfile.js
+    chạy: gulp để watch thay đổi scss thành css
+    nếu có error ps1 cannot be loaded because running scripts is disabled on this system
+    => Chạy Terminal: Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
 */
