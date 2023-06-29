@@ -1,16 +1,14 @@
 {
   "files.exclude": {
-    "Pages": true,
-    ".vscode": true,
     "bin": true,
-    "Properties": true,
     "obj": true,
     "Files": true,
-    "AppMvc.csproj": true,
     "AppMvc.sln": true,
     "appsettings.Development.json": true,
     ".gitignore": true,
-    "ExtendMethods": true
+    "package-lock.json": true,
+    "node_modules": true,
+    ".vscode": true
   },
   "dotnet.defaultSolution": "AppMvc.sln"
 }

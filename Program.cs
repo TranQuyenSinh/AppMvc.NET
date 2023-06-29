@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using App.ExtendMethods;
 using App.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using App.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,14 +34,90 @@ builder.Services.Configure<RazorViewEngineOptions>(option =>
 });
 
 /* ================ Đăng ký DbContext ================ */
-builder.Services.AddDbContext<AppDbContext>(option => {
+builder.Services.AddDbContext<AppDbContext>(option =>
+{
     var connStr = builder.Configuration.GetConnectionString("AppMvcConnectionString");
     option.UseSqlServer(connStr);
 });
 
+/* ================ Send Mail Service ================ */
+// Lấy và đăng ký cấu hình send mail
+builder.Services.AddOptions();
+var mailsettings = builder.Configuration.GetSection("MailSettings");
+builder.Services.Configure<MailSettings>(mailsettings);
+// Đăng ký dịch vụ IEmailSender với đối tượng cụ thể là SendMailService để Identity gửi email xác thực
+builder.Services.AddSingleton<IEmailSender, SendMailService>();
 
 
+// Truy cập IdentityOptions
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Thiết lập về Password
+    options.Password.RequireDigit = false; // Không bắt phải có số
+    options.Password.RequireLowercase = false; // Không bắt phải có chữ thường
+    options.Password.RequireNonAlphanumeric = false; // Không bắt ký tự đặc biệt
+    options.Password.RequireUppercase = false; // Không bắt buộc chữ in
+    options.Password.RequiredLength = 3; // Số ký tự tối thiểu của password
+    options.Password.RequiredUniqueChars = 1; // Số ký tự riêng biệt
 
+    // Cấu hình Lockout - khóa user
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khóa 5 phút
+    options.Lockout.MaxFailedAccessAttempts = 3; // Thất bại 5 lầ thì khóa
+    options.Lockout.AllowedForNewUsers = true;
+
+    // Cấu hình về User.
+    options.User.AllowedUserNameCharacters = // các ký tự đặt tên user
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.RequireUniqueEmail = true;  // Email là duy nhất
+
+    // Cấu hình đăng nhập.
+    options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại, xác thực rồi mới cho login)
+    options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
+    options.SignIn.RequireConfirmedAccount = true;  // Yêu cầu xác thực email trước khi login, xem trang register để rõ hơn
+
+});
+// Đăng ký Identity
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
+/* ================ Authorization option ================ */
+builder.Services.ConfigureApplicationCookie(option =>
+{
+    option.LoginPath = "/login/";
+    option.LogoutPath = "/logout/";
+    option.AccessDeniedPath = "/khongduoctruycap.html";
+});
+
+/* ================ Thêm các Authentication provider ================ */
+// Từ google, facebook
+builder.Services.AddAuthentication()
+                .AddGoogle(option =>
+                {
+                    var ggConfig = builder.Configuration.GetSection("Authentication:Google");
+                    option.ClientId = ggConfig["ClientId"];
+                    option.ClientSecret = ggConfig["ClientSecret"];
+                    // http://localhost:5253/signin-google => Callbackpath mặc định
+                    option.CallbackPath = "/dang-nhap-tu-google";
+                })
+                .AddFacebook(option =>
+                {
+                    var fbConfig = builder.Configuration.GetSection("Authentication:Facebook");
+                    option.AppId = fbConfig["ClientId"];
+                    option.AppSecret = fbConfig["ClientSecret"];
+                    // còn error khi login
+                    // phải xóa &scope=email trong url để fix
+                });
+/* ================ Tùy biến thông báo lỗi của Identity ================ */
+builder.Services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
+
+/* ================ Policy ================ */
+builder.Services.AddAuthorization(options => {
+    options.AddPolicy("ViewManageMenu", pBuilder => {
+        pBuilder.RequireAuthenticatedUser();
+        pBuilder.RequireRole(RoleName.Administrator);
+    });
+});
 
 
 var app = builder.Build();
@@ -64,6 +142,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+/* ================ Thêm vào đoạn này để fix bug khi dùng external login ================ */
+app.UseCookiePolicy(new CookiePolicyOptions()
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax
+});
 
 // url: /xemsanpham/id(1,4) hoặc /viewproduct/id(1,4)
 app.MapControllerRoute(

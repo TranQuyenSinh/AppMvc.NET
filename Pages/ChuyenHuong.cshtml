@@ -1,0 +1,40 @@
+@page "/chuyenhuong.html"
+@{
+    Layout=  "_Layout";
+}
+<h1>Các phương thức để Redirect: Url.Action && Anchor taghelper</h1>
+
+@{
+    var urlToEarth = Url.Action("Details", "Planet", new {id = 3});
+    var urlToPrivacy = Url.Action("Privacy");
+    var urlToActionInArea = Url.Action("Index", "Product", new {area = "ProductManage"});
+    var urlByRouteName = Url.RouteUrl("danhsachsanpham");
+    // hoặc: Url.RouteUrl("default", new {action = "HelloView", controller = "Home", ...});
+}
+<h4>Dùng Url.Action</h4>
+<div class="text-center">
+    <a href="@urlToEarth" class="btn btn-success btn-md">Test Url.Action</a>
+    <a href="@urlToPrivacy" class="btn btn-warning btn-md">Test Url.Action</a>
+    <a href="@urlToActionInArea" class="btn btn-danger btn-md">Test Url.Action in area</a>
+    <a href="@urlByRouteName" class="btn btn-primary btn-md">Test Url.Action by route name</a>
+</div>
+
+<h4>Dùng Anchor Taghelper</h4>
+<div class="text-center mt-2">
+    <a asp-controller="Planet" asp-action="Details" asp-route-id="3" class="btn btn-success btn-md">Test Anchor Taghelper</a>
+    <a asp-action="Privacy" class="btn btn-warning btn-md">Test Anchor Taghelper</a>
+    <a asp-area="ProductManage" asp-controller="Product" asp-action="Index" class="btn btn-danger btn-md">Test Anchor Taghelper with Area</a>
+    <a asp-route="danhsachsanpham" class="btn btn-primary btn-md">Test Anchor Taghelper with Route name</a>
+</div>
+
+<h4>Dùng asp-all-route-data khi có quá nhiều route data cần truyền</h4>
+<div class="text-center mt-2">
+    @{
+        var routeData = new Dictionary<string, string>() {
+            {"id", "2"},
+            {"name", "John Smith"},
+            {"email", "vn.quyensinh@gmail.com"}
+        };
+    }
+    <a asp-route="danhsachsanpham" asp-all-route-data="@routeData" class="btn btn-outline-danger btn-lg">Test</a>
+</div>

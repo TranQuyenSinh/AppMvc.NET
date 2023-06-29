@@ -1,0 +1,41 @@
+@using Microsoft.AspNetCore.Identity
+@using App.Models
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+    @* 
+    SignInManager.IsSignedIn(this.User);
+    UserManager.GetUserName(this.User); 
+    *@
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(this.User)) {
+    <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-controller="Manage" asp-action="Index"> 
+                Xin chào @UserManager.GetUserName(this.User)
+            </a>
+        </li>
+        <li class="nav-item">
+            @{
+                var confirmModalValues = new ConfirmModal() {
+                    Target = "logoff",
+                    Title = "Xác nhận đăng xuất",
+                    Content = "Bạn có chắc muốn đăng xuất?",
+                    Area = "Identity",
+                    Controller = "Account",
+                    Action = "LogOff"
+                };
+            }
+            <button type="button" class="btn btn-link nav-link text-dark" data-bs-toggle="modal" data-bs-target="#logoff">Đăng xuất</button>
+            <partial name="_ConfirmModalPartial" model="@confirmModalValues"/>
+        </li>
+    } else {
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-area="Identity" asp-controller="Account" asp-action="Register">Đăng ký</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-area="Identity" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+        </li>
+    }
+</ul>
+

@@ -31,6 +31,12 @@
     <p>@m (Pending)</p>
 }
 
+@if (pendingMigrations.Any()) {
+    <form method="post">
+        <button type="submit" class="btn btn-success" asp-action="Migrate">Cập nhật Migration</button>
+    </form>
+}
+
 @if (!can_connect) {
     <div class="alert alert-danger">Không thể kết nối đến database này</div>
 }
@@ -46,10 +52,7 @@ else {
     </ul>
 
     <a class="btn btn-danger" asp-action="DeleteDb">Xóa database: @dbName</a>
+    <a class="btn btn-success" asp-action="SeedData">Seed data</a>
 }
 
-@if (pendingMigrations.Any()) {
-    <form method="post">
-        <button type="submit" class="btn btn-success" asp-action="Migrate">Cập nhật Migration</button>
-    </form>
-}
+
